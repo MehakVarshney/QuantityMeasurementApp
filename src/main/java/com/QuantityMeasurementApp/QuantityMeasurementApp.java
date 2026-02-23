@@ -111,7 +111,12 @@ public class QuantityMeasurementApp {
                 return Double.compare(thisInInches, otherInInches) == 0;
             }
         }
-        
+        public static boolean checkEquality(double v1, Unit u1, double v2, Unit u2) {
+            QuantityLength q1 = new QuantityLength(v1, u1);
+            QuantityLength q2 = new QuantityLength(v2, u2);
+            return q1.equals(q2);
+        }
+       
         
         
         public static void main(String[] args) {
