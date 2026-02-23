@@ -24,10 +24,11 @@ public class QuantityMeasurementApp {
 
             return Double.compare(this.value, other.value) == 0;
         }
+	}
         
         // UC - 2 
         
-        public class Inches {
+        public static class Inches {
 
             private final double value;
 
@@ -49,17 +50,6 @@ public class QuantityMeasurementApp {
                 Inches other = (Inches) obj;
                 return Double.compare(this.value, other.value) == 0;
             }
-            public static boolean checkFeetEquality(double value1, double value2) {
-                Feet feet1 = new Feet(value1);
-                Feet feet2 = new Feet(value2);
-                return feet1.equals(feet2);
-            }
-
-            public static boolean checkInchesEquality(double value1, double value2) {
-                Inches inch1 = new Inches(value1);
-                Inches inch2 = new Inches(value2);
-                return inch1.equals(inch2);
-            }
         }
         
         
@@ -68,7 +58,9 @@ public class QuantityMeasurementApp {
         public enum Unit {
 
             FEET(12.0),    
-            INCH(1.0);
+            INCH(1.0),
+        	YARDS(36.0),         
+        	CENTIMETERS(0.393701);
 
             private final double conversionFactorToInch;
 
@@ -82,7 +74,7 @@ public class QuantityMeasurementApp {
         }
         
         
-        public class QuantityLength {
+        public static class QuantityLength {
 
             private final double value;
             private final Unit unit;
@@ -139,10 +131,26 @@ public class QuantityMeasurementApp {
             QuantityLength feet = new QuantityLength(1.0, Unit.FEET);
             QuantityLength inch = new QuantityLength(12.0, Unit.INCH);
 
-            boolean result = feet.equals(inch);
+            boolean resultUC3 = feet.equals(inch);
 
             System.out.println("Input: 1.0 ft and 12.0 inch");
-            System.out.println("Output: Equal (" + result + ")");
+            System.out.println("Output: Equal (" + resultUC3 + ")");
+            
+            
+            // UC - 4
+            
+            System.out.println("UC4 → " +
+                    new QuantityLength(1.0, Unit.YARDS)
+                            .equals(new QuantityLength(3.0, Unit.FEET)));
+
+   
+            System.out.println("UC4 → " +
+                    new QuantityLength(1.0, Unit.YARDS)
+                            .equals(new QuantityLength(36.0, Unit.INCH)));
+
+           
+            System.out.println("UC4 → " +
+                    new QuantityLength(1.0, Unit.CENTIMETERS)
+                            .equals(new QuantityLength(0.393701, Unit.INCH)));
         }
-    }
 }
