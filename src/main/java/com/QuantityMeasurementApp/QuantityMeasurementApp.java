@@ -62,6 +62,58 @@ public class QuantityMeasurementApp {
             }
         }
         
+        
+        // UC - 3
+        
+        public enum Unit {
+
+            FEET(12.0),    
+            INCH(1.0);
+
+            private final double conversionFactorToInch;
+
+            Unit(double conversionFactorToInch) {
+                this.conversionFactorToInch = conversionFactorToInch;
+            }
+
+            public double toInch(double value) {
+                return value * conversionFactorToInch;
+            }
+        }
+        
+        
+        public class QuantityLength {
+
+            private final double value;
+            private final Unit unit;
+
+            public QuantityLength(double value, Unit unit) {
+                this.value = value;
+                this.unit = unit;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+
+                if (this == obj) {
+                    return true;
+                }
+
+                if (obj == null || getClass() != obj.getClass()) {
+                    return false;
+                }
+
+                QuantityLength other = (QuantityLength) obj;
+
+                double thisInInches = this.unit.toInch(this.value);
+                double otherInInches = other.unit.toInch(other.value);
+
+                return Double.compare(thisInInches, otherInInches) == 0;
+            }
+        }
+        
+        
+        
         public static void main(String[] args) {
         	Feet feet1 = new Feet(1.0);
             Feet feet2 = new Feet(1.0);
@@ -80,6 +132,17 @@ public class QuantityMeasurementApp {
 
             System.out.println("Input: 1.0 inch and 1.0 inch");
             System.out.println("Output: Equal (" + inchResult + ")");
+            
+            
+            // UC - 3
+            
+            QuantityLength feet = new QuantityLength(1.0, Unit.FEET);
+            QuantityLength inch = new QuantityLength(12.0, Unit.INCH);
+
+            boolean result = feet.equals(inch);
+
+            System.out.println("Input: 1.0 ft and 12.0 inch");
+            System.out.println("Output: Equal (" + result + ")");
         }
     }
 }

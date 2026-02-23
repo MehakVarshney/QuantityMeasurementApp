@@ -83,5 +83,43 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(i1.equals(i1), "Object must be equal to itself");
     }
+    
+    // UC - 3 
+    @Test
+    void testEquality_SameUnitSameValue() {
+        QuantityLength q1 = new QuantityLength(1.0, Unit.FEET);
+        QuantityLength q2 = new QuantityLength(1.0, Unit.FEET);
+
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void testEquality_SameUnitDifferentValue() {
+        QuantityLength q1 = new QuantityLength(1.0, Unit.INCH);
+        QuantityLength q2 = new QuantityLength(2.0, Unit.INCH);
+
+        assertFalse(q1.equals(q2));
+    }
+
+    @Test
+    void testEquality_FeetToInch() {
+        QuantityLength feet = new QuantityLength(1.0, Unit.FEET);
+        QuantityLength inch = new QuantityLength(12.0, Unit.INCH);
+
+        assertTrue(feet.equals(inch));
+    }
+
+    @Test
+    void testEquality_NullComparison() {
+        QuantityLength q1 = new QuantityLength(1.0, Unit.FEET);
+        assertFalse(q1.equals(null));
+    }
+
+    @Test
+    void testEquality_SameReference() {
+        QuantityLength q1 = new QuantityLength(1.0, Unit.FEET);
+        assertTrue(q1.equals(q1));
+    }
+
 
 }
