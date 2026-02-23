@@ -40,5 +40,48 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(f1.equals(f1), "Object must be equal to itself");
     }
+    
+    
+    
+    
+    //  INCH TEST CASES
+
+    @Test
+    void testInchEquality_SameValue() {
+        Inches i1 = new Inches(1.0);
+        Inches i2 = new Inches(1.0);
+
+        assertTrue(i1.equals(i2), "1.0 inch should be equal to 1.0 inch");
+    }
+
+    @Test
+    void testInchEquality_DifferentValue() {
+        Inches i1 = new Inches(1.0);
+        Inches i2 = new Inches(2.0);
+
+        assertFalse(i1.equals(i2), "1.0 inch should not be equal to 2.0 inch");
+    }
+
+    @Test
+    void testInchEquality_NullComparison() {
+        Inches i1 = new Inches(1.0);
+
+        assertFalse(i1.equals(null), "Inches object should not be equal to null");
+    }
+
+    @Test
+    void testInchEquality_NonNumericInput() {
+        Inches i1 = new Inches(1.0);
+        String nonNumeric = "1.0";
+
+        assertFalse(i1.equals(nonNumeric), "Inches should not be equal to non-numeric object");
+    }
+
+    @Test
+    void testInchEquality_SameReference() {
+        Inches i1 = new Inches(1.0);
+
+        assertTrue(i1.equals(i1), "Object must be equal to itself");
+    }
 
 }
