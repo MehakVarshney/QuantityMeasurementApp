@@ -1,2 +1,0 @@
-# QuantityMeasurementApp
-New project Readme
