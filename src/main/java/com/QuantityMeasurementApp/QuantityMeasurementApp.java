@@ -24,6 +24,7 @@ public class QuantityMeasurementApp {
 
             return Double.compare(this.value, other.value) == 0;
         }
+	}
         
         // UC - 2 
         
@@ -70,5 +71,4 @@ public class QuantityMeasurementApp {
             System.out.println("Input: 1.0 inch and 1.0 inch");
             System.out.println("Output: Equal (" + inchResult + ")");
         }
-    }
 }
