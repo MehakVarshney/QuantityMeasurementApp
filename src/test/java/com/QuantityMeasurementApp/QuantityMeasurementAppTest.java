@@ -282,6 +282,154 @@ public class QuantityMeasurementAppTest {
         assertFalse(yard.equals(null),
                 "QuantityLength should not be equal to null");
     }
+    
+    
+ // UC5 : CONVERSION TESTS 
+
+    @Test
+    void testConversion_FeetToInches() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                1.0,
+                QuantityMeasurementApp.Unit.FEET,
+                QuantityMeasurementApp.Unit.INCH
+        );
+
+        assertEquals(12.0, result);
+    }
+
+    @Test
+    void testConversion_InchesToFeet() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                24.0,
+                QuantityMeasurementApp.Unit.INCH,
+                QuantityMeasurementApp.Unit.FEET
+        );
+
+        assertEquals(2.0, result);
+    }
+
+    @Test
+    void testConversion_YardsToInches() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                1.0,
+                QuantityMeasurementApp.Unit.YARDS,
+                QuantityMeasurementApp.Unit.INCH
+        );
+
+        assertEquals(36.0, result);
+    }
+
+    @Test
+    void testConversion_InchesToYards() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                72.0,
+                QuantityMeasurementApp.Unit.INCH,
+                QuantityMeasurementApp.Unit.YARDS
+        );
+
+        assertEquals(2.0, result);
+    }
+
+    @Test
+    void testConversion_CentimetersToInches() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                2.54,
+                QuantityMeasurementApp.Unit.CENTIMETERS,
+                QuantityMeasurementApp.Unit.INCH
+        );
+
+        assertEquals(1.0, result, 1e-6);
+    }
+
+    @Test
+    void testConversion_FeetToYards() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                6.0,
+                QuantityMeasurementApp.Unit.FEET,
+                QuantityMeasurementApp.Unit.YARDS
+        );
+
+        assertEquals(2.0, result);
+    }
+
+    @Test
+    void testConversion_ZeroValue() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                0.0,
+                QuantityMeasurementApp.Unit.FEET,
+                QuantityMeasurementApp.Unit.INCH
+        );
+
+        assertEquals(0.0, result);
+    }
+
+    @Test
+    void testConversion_NegativeValue() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                -1.0,
+                QuantityMeasurementApp.Unit.FEET,
+                QuantityMeasurementApp.Unit.INCH
+        );
+
+        assertEquals(-12.0, result);
+    }
+
+    @Test
+    void testConversion_SameUnit() {
+        double result = QuantityMeasurementApp.QuantityLength.convert(
+                5.0,
+                QuantityMeasurementApp.Unit.FEET,
+                QuantityMeasurementApp.Unit.FEET
+        );
+
+        assertEquals(5.0, result);
+    }
+
+    @Test
+    void testConversion_RoundTrip_PreservesValue() {
+
+        double original = 10.0;
+
+        double converted =
+                QuantityMeasurementApp.QuantityLength.convert(
+                        original,
+                        QuantityMeasurementApp.Unit.FEET,
+                        QuantityMeasurementApp.Unit.INCH
+                );
+
+        double roundTrip =
+                QuantityMeasurementApp.QuantityLength.convert(
+                        converted,
+                        QuantityMeasurementApp.Unit.INCH,
+                        QuantityMeasurementApp.Unit.FEET
+                );
+
+        assertEquals(original, roundTrip, 1e-6);
+    }
+
+    @Test
+    void testConversion_InvalidUnit_Throws() {
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            QuantityMeasurementApp.QuantityLength.convert(
+                    1.0,
+                    null,
+                    QuantityMeasurementApp.Unit.FEET
+            );
+        });
+    }
+
+    @Test
+    void testConversion_NaNValue_Throws() {
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            QuantityMeasurementApp.QuantityLength.convert(
+                    Double.NaN,
+                    QuantityMeasurementApp.Unit.FEET,
+                    QuantityMeasurementApp.Unit.INCH
+            );
+        });
+    }
 
 
 }

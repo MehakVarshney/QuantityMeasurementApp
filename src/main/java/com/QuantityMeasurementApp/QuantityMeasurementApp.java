@@ -102,8 +102,63 @@ public class QuantityMeasurementApp {
 
                 return Double.compare(thisInInches, otherInInches) == 0;
             }
+         // UC5 → Static conversion method
+            public static double convert(double value, Unit source, Unit target) {
+
+                if (!Double.isFinite(value)) {
+                    throw new IllegalArgumentException("Invalid numeric value");
+                }
+
+                if (source == null || target == null) {
+                    throw new IllegalArgumentException("Unit cannot be null");
+                }
+
+                double valueInInches = source.toInch(value);
+
+                return valueInInches / target.toInch(1.0);
+            }
+
+
+            // UC5 → Instance conversion
+            public QuantityLength convertTo(Unit target) {
+
+                double convertedValue = convert(this.value, this.unit, target);
+
+                return new QuantityLength(convertedValue, target);
+            }
+
+
+            // UC5
+            @Override
+            public String toString() {
+                return "Quantity(" + value + ", " + unit + ")";
+            }
         }
         
+        
+     // UC5 - Demonstrate conversion
+        public static void demonstrateLengthConversion(double value, Unit from, Unit to) {
+
+            double result = QuantityLength.convert(value, from, to);
+
+            System.out.println("convert(" + value + ", " + from + ", " + to + ") → " + result);
+        }
+
+
+        // UC5 - Overloaded method
+        public static void demonstrateLengthConversion(QuantityLength length, Unit to) {
+
+            QuantityLength converted = length.convertTo(to);
+
+            System.out.println(length + " → " + converted);
+        }
+
+
+        // UC5 - Equality demo
+        public static void demonstrateLengthEquality(QuantityLength l1, QuantityLength l2) {
+
+            System.out.println(l1 + " equals " + l2 + " ? " + l1.equals(l2));
+        }
         
         
         public static void main(String[] args) {
@@ -152,5 +207,19 @@ public class QuantityMeasurementApp {
             System.out.println("UC4 → " +
                     new QuantityLength(1.0, Unit.CENTIMETERS)
                             .equals(new QuantityLength(0.393701, Unit.INCH)));
+            
+            
+         // UC - 5
+
+            System.out.println("\nUC5 Conversions:");
+
+            demonstrateLengthConversion(1.0, Unit.FEET, Unit.INCH);
+            demonstrateLengthConversion(3.0, Unit.YARDS, Unit.FEET);
+            demonstrateLengthConversion(36.0, Unit.INCH, Unit.YARDS);
+            demonstrateLengthConversion(1.0, Unit.CENTIMETERS, Unit.INCH);
+            demonstrateLengthConversion(0.0, Unit.FEET, Unit.INCH);
+
+            QuantityLength lengthInYard = new QuantityLength(2.0, Unit.YARDS);
+            demonstrateLengthConversion(lengthInYard, Unit.FEET);
         }
 }
