@@ -133,6 +133,40 @@ public class QuantityMeasurementApp {
             public String toString() {
                 return "Quantity(" + value + ", " + unit + ")";
             }
+            
+         // UC6 → Add two QuantityLength objects
+            public QuantityLength add(QuantityLength other) {
+
+                if (other == null) {
+                    throw new IllegalArgumentException("Second operand cannot be null");
+                }
+
+                if (!Double.isFinite(this.value) || !Double.isFinite(other.value)) {
+                    throw new IllegalArgumentException("Invalid numeric value");
+                }
+
+                // convert both values to inches (base unit)
+                double thisInInch = this.unit.toInch(this.value);
+                double otherInInch = other.unit.toInch(other.value);
+
+                double sumInInch = thisInInch + otherInInch;
+
+                // convert result back to unit of first operand
+                double resultValue = sumInInch / this.unit.toInch(1.0);
+
+                return new QuantityLength(resultValue, this.unit);
+            }
+
+
+            // UC6 → Static addition API
+            public static QuantityLength add(QuantityLength a, QuantityLength b) {
+
+                if (a == null || b == null) {
+                    throw new IllegalArgumentException("Operands cannot be null");
+                }
+
+                return a.add(b);
+            }
         }
         
         
@@ -221,5 +255,20 @@ public class QuantityMeasurementApp {
 
             QuantityLength lengthInYard = new QuantityLength(2.0, Unit.YARDS);
             demonstrateLengthConversion(lengthInYard, Unit.FEET);
+            
+            
+         // UC6 → Addition
+
+            System.out.println("\nUC6 Addition:");
+
+            QuantityLength a = new QuantityLength(1.0, Unit.FEET);
+            QuantityLength b = new QuantityLength(12.0, Unit.INCH);
+
+            System.out.println("Add: " + a + " + " + b + " → " + a.add(b));
+
+            QuantityLength c = new QuantityLength(1.0, Unit.YARDS);
+            QuantityLength d = new QuantityLength(3.0, Unit.FEET);
+
+            System.out.println("Add: " + c + " + " + d + " → " + c.add(d));
         }
 }
