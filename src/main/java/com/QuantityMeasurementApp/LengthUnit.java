@@ -1,29 +1,23 @@
 package com.QuantityMeasurementApp;
 
-public enum LengthUnit {
+public enum LengthUnit implements IMeasurable {
 
     FEET(1.0),
     INCH(1.0 / 12.0),
     YARDS(3.0),
     CENTIMETERS(1.0 / 30.48);
 
-    private final double toFeetFactor;
+    private final double factor;
 
-    LengthUnit(double toFeetFactor) {
-        this.toFeetFactor = toFeetFactor;
-    }
-
-    // Convert value of this unit to base unit (feet)
-    public double convertToBaseUnit(double value) {
-        return value * toFeetFactor;
-    }
-
-    // Convert base unit (feet) value to this unit
-    public double convertFromBaseUnit(double baseValue) {
-        return baseValue / toFeetFactor;
+    LengthUnit(double factor) {
+        this.factor = factor;
     }
 
     public double getConversionFactor() {
-        return toFeetFactor;
+        return factor;
+    }
+
+    public String getUnitName() {
+        return name();
     }
 }
