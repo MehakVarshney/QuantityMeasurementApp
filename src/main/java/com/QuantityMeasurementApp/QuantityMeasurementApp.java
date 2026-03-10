@@ -18,6 +18,18 @@ public class QuantityMeasurementApp {
         System.out.println(q1 + " + " + q2 + " → " + q1.add(q2, target));
     }
 
+    public static <U extends IMeasurable> void demonstrateSubtraction(
+            Quantity<U> q1, Quantity<U> q2, U target) {
+
+        System.out.println(q1 + " - " + q2 + " → " + q1.subtract(q2, target));
+    }
+    
+    public static <U extends IMeasurable> void demonstrateDivision(
+            Quantity<U> q1, Quantity<U> q2) {
+
+        System.out.println(q1 + " ÷ " + q2 + " → " + q1.divide(q2));
+    }
+    
     public static void main(String[] args) {
 
         // Length example
@@ -32,6 +44,9 @@ public class QuantityMeasurementApp {
         demonstrateConversion(length1, LengthUnit.INCH);
 
         demonstrateAddition(length1, length2, LengthUnit.FEET);
+        
+        demonstrateSubtraction(length1, length2, LengthUnit.FEET);
+        demonstrateDivision(length1, length2);
 
 
         // Weight example
@@ -47,6 +62,8 @@ public class QuantityMeasurementApp {
 
         demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
         
+        demonstrateSubtraction(weight1, weight2, WeightUnit.KILOGRAM);
+        demonstrateDivision(weight1, weight2);
         
      // Volume example
 
@@ -64,5 +81,8 @@ public class QuantityMeasurementApp {
         demonstrateConversion(volume1, VolumeUnit.MILLILITRE);
 
         demonstrateAddition(volume1, volume2, VolumeUnit.LITRE);
+        demonstrateSubtraction(volume1, volume2, VolumeUnit.LITRE);
+        demonstrateDivision(volume1, volume2);
+        
     }
 }

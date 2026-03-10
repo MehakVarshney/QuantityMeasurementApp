@@ -279,4 +279,43 @@ public class QuantityMeasurementAppTest {
 
         assertFalse(volume.equals(length));
     }
+    
+    @Test
+    void testSubtraction_FeetMinusInches() {
+
+        Quantity<LengthUnit> feet =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> inch =
+                new Quantity<>(6.0, LengthUnit.INCH);
+
+        Quantity<LengthUnit> result = feet.subtract(inch);
+
+        assertEquals(9.5, result.getValue(), 1e-6);
+    }
+    @Test
+    void testDivision_FeetByFeet() {
+
+        Quantity<LengthUnit> a =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> b =
+                new Quantity<>(2.0, LengthUnit.FEET);
+
+        double result = a.divide(b);
+
+        assertEquals(5.0, result);
+    }
+    @Test
+    void testDivision_ByZero() {
+
+        Quantity<LengthUnit> a =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> b =
+                new Quantity<>(0.0, LengthUnit.FEET);
+
+        assertThrows(ArithmeticException.class,
+                () -> a.divide(b));
+    }
 }
