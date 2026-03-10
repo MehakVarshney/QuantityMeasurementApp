@@ -49,7 +49,7 @@ public class Quantity<U extends IMeasurable> {
 
     public Quantity<U> convertTo(U targetUnit) {
 
-        if(targetUnit == null)
+        if (targetUnit == null)
             throw new IllegalArgumentException("Target unit cannot be null");
 
         double base = unit.convertToBaseUnit(value);
@@ -58,88 +58,126 @@ public class Quantity<U extends IMeasurable> {
 
         return new Quantity<>(converted, targetUnit);
     }
-    
+
+    //  ADD 
+
     public Quantity<U> add(Quantity<U> other) {
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
+        validateArithmeticOperands(other, null, false);
 
-        double sum = base1 + base2;
+        double baseResult = performBaseArithmetic(other, ArithmeticOperation.ADD);
 
-        double result = unit.convertFromBaseUnit(sum);
+        double result = unit.convertFromBaseUnit(baseResult);
 
-        return new Quantity<>(result, unit);
+        return new Quantity<>(roundToTwoDecimals(result), unit);
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double sum = base1 + base2;
+        double baseResult = performBaseArithmetic(other, ArithmeticOperation.ADD);
 
-        double result = targetUnit.convertFromBaseUnit(sum);
+        double result = targetUnit.convertFromBaseUnit(baseResult);
 
-        return new Quantity<>(result, targetUnit);
+        return new Quantity<>(roundToTwoDecimals(result), targetUnit);
     }
-    
+
+    //  SUBTRACT 
+
     public Quantity<U> subtract(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Quantity cannot be null");
+        validateArithmeticOperands(other, null, false);
 
-        if (!unit.getClass().equals(other.unit.getClass()))
-            throw new IllegalArgumentException("Different measurement categories");
+        double baseResult = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
+        double result = unit.convertFromBaseUnit(baseResult);
 
-        double resultBase = base1 - base2;
-
-        double result = unit.convertFromBaseUnit(resultBase);
-
-        return new Quantity<>(result, unit);
+        return new Quantity<>(roundToTwoDecimals(result), unit);
     }
-    
+
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Quantity cannot be null");
+        validateArithmeticOperands(other, targetUnit, true);
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
+        double baseResult = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
-        if (!unit.getClass().equals(other.unit.getClass()))
-            throw new IllegalArgumentException("Different measurement categories");
+        double result = targetUnit.convertFromBaseUnit(baseResult);
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
-
-        double resultBase = base1 - base2;
-
-        double result = targetUnit.convertFromBaseUnit(resultBase);
-
-        return new Quantity<>(result, targetUnit);
+        return new Quantity<>(roundToTwoDecimals(result), targetUnit);
     }
+
+    //  DIVIDE 
 
     public double divide(Quantity<U> other) {
 
+        validateArithmeticOperands(other, null, false);
+
+        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
+    }
+
+    // ENUM FOR OPERATIONS 
+
+    private enum ArithmeticOperation {
+
+        ADD {
+            double compute(double a, double b) {
+                return a + b;
+            }
+        },
+
+        SUBTRACT {
+            double compute(double a, double b) {
+                return a - b;
+            }
+        },
+
+        DIVIDE {
+            double compute(double a, double b) {
+                if (b == 0)
+                    throw new ArithmeticException("Division by zero");
+                return a / b;
+            }
+        };
+
+        abstract double compute(double a, double b);
+    }
+
+    // VALIDATION HELPER 
+
+    private void validateArithmeticOperands(
+            Quantity<U> other, U targetUnit, boolean targetUnitRequired) {
+
         if (other == null)
-            throw new IllegalArgumentException("Quantity cannot be null");
+            throw new IllegalArgumentException("Operand cannot be null");
 
         if (!unit.getClass().equals(other.unit.getClass()))
             throw new IllegalArgumentException("Different measurement categories");
 
+        if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
+            throw new IllegalArgumentException("Invalid numeric value");
+
+        if (targetUnitRequired && targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+    }
+
+    //  CORE ARITHMETIC HELPER
+
+    private double performBaseArithmetic(
+            Quantity<U> other, ArithmeticOperation operation) {
+
         double base1 = unit.convertToBaseUnit(value);
         double base2 = other.unit.convertToBaseUnit(other.value);
 
-        if (base2 == 0)
-            throw new ArithmeticException("Division by zero");
-
-        return base1 / base2;
+        return operation.compute(base1, base2);
     }
-    
-    
+
+    // ROUNDING HELPER 
+
+    private double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(unit.convertToBaseUnit(value));

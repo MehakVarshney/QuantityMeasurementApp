@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 public class QuantityMeasurementAppTest {
 
-    //  LENGTH TESTS
+    // LENGTH TESTS 
 
     @Test
     void testEquality_FeetToFeet() {
@@ -43,7 +43,7 @@ public class QuantityMeasurementAppTest {
         assertTrue(yard.equals(feet));
     }
 
-    //  CONVERSION
+    // CONVERSION 
 
     @Test
     void testConversion_FeetToInch() {
@@ -69,7 +69,7 @@ public class QuantityMeasurementAppTest {
         assertEquals(2.0, result.getValue());
     }
 
-    //  ADDITION
+    // ADDITION 
 
     @Test
     void testAddition_FeetPlusInch() {
@@ -101,7 +101,7 @@ public class QuantityMeasurementAppTest {
         assertEquals(24.0, result.getValue());
     }
 
-    //  WEIGHT TESTS
+    //  WEIGHT TESTS 
 
     @Test
     void testWeightEquality_KgToGram() {
@@ -142,7 +142,7 @@ public class QuantityMeasurementAppTest {
         assertEquals(2.0, result.getValue());
     }
 
-    //  SAFETY TEST
+  
 
     @Test
     void testLengthVsWeight_NotEqual() {
@@ -156,7 +156,7 @@ public class QuantityMeasurementAppTest {
         assertFalse(length.equals(weight));
     }
 
-    // NULL TEST 
+    
 
     @Test
     void testNullComparison() {
@@ -167,7 +167,6 @@ public class QuantityMeasurementAppTest {
         assertFalse(q.equals(null));
     }
 
-    //SAME REFERENCE
 
     @Test
     void testSameReference() {
@@ -177,7 +176,9 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(q.equals(q));
     }
-    
+
+    //  VOLUME TESTS 
+
     @Test
     void testEquality_LitreToMillilitre() {
 
@@ -189,7 +190,7 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(litre.equals(ml));
     }
-    
+
     @Test
     void testEquality_GallonToLitre() {
 
@@ -201,7 +202,7 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(gallon.equals(litre));
     }
-    
+
     @Test
     void testConversion_LitreToMillilitre() {
 
@@ -213,7 +214,7 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(1000.0, ml.getValue(), 1e-6);
     }
-    
+
     @Test
     void testConversion_GallonToLitre() {
 
@@ -225,7 +226,7 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(3.78541, litre.getValue(), 1e-5);
     }
-    
+
     @Test
     void testAddition_LitrePlusMillilitre() {
 
@@ -240,7 +241,7 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(2.0, result.getValue(), 1e-6);
     }
-    
+
     @Test
     void testAddition_TargetUnit_Millilitre() {
 
@@ -255,7 +256,7 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(2000.0, result.getValue(), 1e-6);
     }
-    
+
     @Test
     void testVolumeVsLength_NotEqual() {
 
@@ -267,19 +268,9 @@ public class QuantityMeasurementAppTest {
 
         assertFalse(volume.equals(length));
     }
-    
-    @Test
-    void testVolumeVsLength_NotEqual() {
 
-        Quantity<VolumeUnit> volume =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
+    //  UC12 OPERATIONS
 
-        Quantity<LengthUnit> length =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        assertFalse(volume.equals(length));
-    }
-    
     @Test
     void testSubtraction_FeetMinusInches() {
 
@@ -293,6 +284,7 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(9.5, result.getValue(), 1e-6);
     }
+
     @Test
     void testDivision_FeetByFeet() {
 
@@ -306,6 +298,7 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(5.0, result);
     }
+
     @Test
     void testDivision_ByZero() {
 
