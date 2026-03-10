@@ -177,4 +177,106 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(q.equals(q));
     }
+    
+    @Test
+    void testEquality_LitreToMillilitre() {
+
+        Quantity<VolumeUnit> litre =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> ml =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        assertTrue(litre.equals(ml));
+    }
+    
+    @Test
+    void testEquality_GallonToLitre() {
+
+        Quantity<VolumeUnit> gallon =
+                new Quantity<>(1.0, VolumeUnit.GALLON);
+
+        Quantity<VolumeUnit> litre =
+                new Quantity<>(3.78541, VolumeUnit.LITRE);
+
+        assertTrue(gallon.equals(litre));
+    }
+    
+    @Test
+    void testConversion_LitreToMillilitre() {
+
+        Quantity<VolumeUnit> litre =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> ml =
+                litre.convertTo(VolumeUnit.MILLILITRE);
+
+        assertEquals(1000.0, ml.getValue(), 1e-6);
+    }
+    
+    @Test
+    void testConversion_GallonToLitre() {
+
+        Quantity<VolumeUnit> gallon =
+                new Quantity<>(1.0, VolumeUnit.GALLON);
+
+        Quantity<VolumeUnit> litre =
+                gallon.convertTo(VolumeUnit.LITRE);
+
+        assertEquals(3.78541, litre.getValue(), 1e-5);
+    }
+    
+    @Test
+    void testAddition_LitrePlusMillilitre() {
+
+        Quantity<VolumeUnit> litre =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> ml =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        Quantity<VolumeUnit> result =
+                litre.add(ml);
+
+        assertEquals(2.0, result.getValue(), 1e-6);
+    }
+    
+    @Test
+    void testAddition_TargetUnit_Millilitre() {
+
+        Quantity<VolumeUnit> litre =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> ml =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        Quantity<VolumeUnit> result =
+                litre.add(ml, VolumeUnit.MILLILITRE);
+
+        assertEquals(2000.0, result.getValue(), 1e-6);
+    }
+    
+    @Test
+    void testVolumeVsLength_NotEqual() {
+
+        Quantity<VolumeUnit> volume =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<LengthUnit> length =
+                new Quantity<>(1.0, LengthUnit.FEET);
+
+        assertFalse(volume.equals(length));
+    }
+    
+    @Test
+    void testVolumeVsLength_NotEqual() {
+
+        Quantity<VolumeUnit> volume =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<LengthUnit> length =
+                new Quantity<>(1.0, LengthUnit.FEET);
+
+        assertFalse(volume.equals(length));
+    }
 }

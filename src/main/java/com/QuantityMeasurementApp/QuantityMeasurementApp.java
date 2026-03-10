@@ -46,5 +46,23 @@ public class QuantityMeasurementApp {
         demonstrateConversion(weight1, WeightUnit.GRAM);
 
         demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
+        
+        
+     // Volume example
+
+        Quantity<VolumeUnit> volume1 =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> volume2 =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        Quantity<VolumeUnit> volume3 =
+                new Quantity<>(1.0, VolumeUnit.GALLON);
+
+        demonstrateEquality(volume1, volume2);
+
+        demonstrateConversion(volume1, VolumeUnit.MILLILITRE);
+
+        demonstrateAddition(volume1, volume2, VolumeUnit.LITRE);
     }
 }
