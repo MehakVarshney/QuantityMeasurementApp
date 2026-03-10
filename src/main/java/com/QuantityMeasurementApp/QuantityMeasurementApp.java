@@ -84,5 +84,24 @@ public class QuantityMeasurementApp {
         demonstrateSubtraction(volume1, volume2, VolumeUnit.LITRE);
         demonstrateDivision(volume1, volume2);
         
+     // Temperature example
+
+        Quantity<TemperatureUnit> temp1 =
+                new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+
+        Quantity<TemperatureUnit> temp2 =
+                new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+
+        demonstrateEquality(temp1, temp2);
+
+        demonstrateConversion(temp1, TemperatureUnit.FAHRENHEIT);
+
+        // This will throw exception
+        try {
+            demonstrateAddition(temp1, temp2, TemperatureUnit.CELSIUS);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
     }
 }
