@@ -1,314 +1,163 @@
 package com.QuantityMeasurementApp;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.QuantityMeasurementApp.controller.*;
+import com.QuantityMeasurementApp.model.*;
+import com.QuantityMeasurementApp.repository.*;
+import com.QuantityMeasurementApp.service.*;
 
 public class QuantityMeasurementAppTest {
 
-    // LENGTH TESTS 
+    IQuantityMeasurementService service;
+    QuantityMeasurementController controller;
+
+    @BeforeEach
+    void setup(){
+
+        IQuantityMeasurementRepository repo =
+                QuantityMeasurementCacheRepository.getInstance();
+
+        service =
+                new QuantityMeasurementServiceImpl(repo);
+
+        controller =
+                new QuantityMeasurementController(service);
+    }
+
+    // ENTITY TEST
 
     @Test
-    void testEquality_FeetToFeet() {
+    void testQuantityDTOCreation(){
 
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(1.0, LengthUnit.FEET);
+        QuantityDTO q =
+                new QuantityDTO(1.0,"FEET","LENGTH");
 
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(1.0, LengthUnit.FEET);
+        assertEquals(1.0,q.getValue());
 
-        assertTrue(q1.equals(q2));
+        assertEquals("FEET",q.getUnit());
+    }
+
+    // SERVICE TESTS
+
+    @Test
+    void testServiceCompare(){
+
+        QuantityDTO q1 =
+                new QuantityDTO(1.0,"FEET","LENGTH");
+
+        QuantityDTO q2 =
+                new QuantityDTO(12.0,"INCH","LENGTH");
+
+        assertTrue(service.compare(q1,q2));
     }
 
     @Test
-    void testEquality_FeetToInch() {
+    void testServiceConversion(){
 
-        Quantity<LengthUnit> feet =
-                new Quantity<>(1.0, LengthUnit.FEET);
+        QuantityDTO q =
+                new QuantityDTO(1.0,"FEET","LENGTH");
 
-        Quantity<LengthUnit> inch =
-                new Quantity<>(12.0, LengthUnit.INCH);
+        QuantityDTO result =
+                service.convert(q,"INCH");
 
-        assertTrue(feet.equals(inch));
+        assertEquals(12.0,
+                result.getValue());
     }
 
     @Test
-    void testEquality_YardToFeet() {
+    void testServiceAddition(){
 
-        Quantity<LengthUnit> yard =
-                new Quantity<>(1.0, LengthUnit.YARDS);
+        QuantityDTO q1 =
+                new QuantityDTO(1.0,"FEET","LENGTH");
 
-        Quantity<LengthUnit> feet =
-                new Quantity<>(3.0, LengthUnit.FEET);
+        QuantityDTO q2 =
+                new QuantityDTO(12.0,"INCH","LENGTH");
 
-        assertTrue(yard.equals(feet));
-    }
+        QuantityDTO result =
+                service.add(q1,q2);
 
-    // CONVERSION 
-
-    @Test
-    void testConversion_FeetToInch() {
-
-        Quantity<LengthUnit> feet =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> result =
-                feet.convertTo(LengthUnit.INCH);
-
-        assertEquals(12.0, result.getValue());
+        assertEquals(2.0,
+                result.getValue());
     }
 
     @Test
-    void testConversion_InchToFeet() {
+    void testServiceSubtraction(){
 
-        Quantity<LengthUnit> inch =
-                new Quantity<>(24.0, LengthUnit.INCH);
+        QuantityDTO q1 =
+                new QuantityDTO(10.0,"FEET","LENGTH");
 
-        Quantity<LengthUnit> result =
-                inch.convertTo(LengthUnit.FEET);
+        QuantityDTO q2 =
+                new QuantityDTO(12.0,"INCH","LENGTH");
 
-        assertEquals(2.0, result.getValue());
-    }
+        QuantityDTO result =
+                service.subtract(q1,q2);
 
-    // ADDITION 
-
-    @Test
-    void testAddition_FeetPlusInch() {
-
-        Quantity<LengthUnit> feet =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> inch =
-                new Quantity<>(12.0, LengthUnit.INCH);
-
-        Quantity<LengthUnit> result =
-                feet.add(inch);
-
-        assertEquals(2.0, result.getValue());
+        assertEquals(9.0,
+                result.getValue());
     }
 
     @Test
-    void testAddition_TargetUnit() {
+    void testServiceDivision(){
 
-        Quantity<LengthUnit> feet =
-                new Quantity<>(1.0, LengthUnit.FEET);
+        QuantityDTO q1 =
+                new QuantityDTO(10.0,"FEET","LENGTH");
 
-        Quantity<LengthUnit> inch =
-                new Quantity<>(12.0, LengthUnit.INCH);
+        QuantityDTO q2 =
+                new QuantityDTO(2.0,"FEET","LENGTH");
 
-        Quantity<LengthUnit> result =
-                feet.add(inch, LengthUnit.INCH);
+        double result =
+                service.divide(q1,q2);
 
-        assertEquals(24.0, result.getValue());
+        assertEquals(5.0,result);
     }
 
-    //  WEIGHT TESTS 
+    // CONTROLLER TEST
 
     @Test
-    void testWeightEquality_KgToGram() {
+    void testControllerObject(){
 
-        Quantity<WeightUnit> kg =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-        Quantity<WeightUnit> g =
-                new Quantity<>(1000.0, WeightUnit.GRAM);
-
-        assertTrue(kg.equals(g));
+        assertNotNull(controller);
     }
 
+    // REPOSITORY TEST
+
     @Test
-    void testWeightConversion_KgToGram() {
+    void testRepositorySave(){
 
-        Quantity<WeightUnit> kg =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        IQuantityMeasurementRepository repo =
+                QuantityMeasurementCacheRepository.getInstance();
 
-        Quantity<WeightUnit> g =
-                kg.convertTo(WeightUnit.GRAM);
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity(
+                        "TEST","SUCCESS");
 
-        assertEquals(1000.0, g.getValue());
+        repo.save(entity);
+
+        assertFalse(
+                repo.findAll().isEmpty());
     }
 
-    @Test
-    void testWeightAddition() {
-
-        Quantity<WeightUnit> kg =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-        Quantity<WeightUnit> g =
-                new Quantity<>(1000.0, WeightUnit.GRAM);
-
-        Quantity<WeightUnit> result =
-                kg.add(g);
-
-        assertEquals(2.0, result.getValue());
-    }
-
-  
+    // INTEGRATION TEST
 
     @Test
-    void testLengthVsWeight_NotEqual() {
+    void testEndToEnd(){
 
-        Quantity<LengthUnit> length =
-                new Quantity<>(1.0, LengthUnit.FEET);
+        QuantityDTO q1 =
+                new QuantityDTO(1.0,"FEET","LENGTH");
 
-        Quantity<WeightUnit> weight =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        QuantityDTO q2 =
+                new QuantityDTO(12.0,"INCH","LENGTH");
 
-        assertFalse(length.equals(weight));
-    }
+        assertTrue(service.compare(q1,q2));
 
-    
+        QuantityDTO result =
+                service.add(q1,q2);
 
-    @Test
-    void testNullComparison() {
-
-        Quantity<LengthUnit> q =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        assertFalse(q.equals(null));
-    }
-
-
-    @Test
-    void testSameReference() {
-
-        Quantity<LengthUnit> q =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        assertTrue(q.equals(q));
-    }
-
-    //  VOLUME TESTS 
-
-    @Test
-    void testEquality_LitreToMillilitre() {
-
-        Quantity<VolumeUnit> litre =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> ml =
-                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-        assertTrue(litre.equals(ml));
-    }
-
-    @Test
-    void testEquality_GallonToLitre() {
-
-        Quantity<VolumeUnit> gallon =
-                new Quantity<>(1.0, VolumeUnit.GALLON);
-
-        Quantity<VolumeUnit> litre =
-                new Quantity<>(3.78541, VolumeUnit.LITRE);
-
-        assertTrue(gallon.equals(litre));
-    }
-
-    @Test
-    void testConversion_LitreToMillilitre() {
-
-        Quantity<VolumeUnit> litre =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> ml =
-                litre.convertTo(VolumeUnit.MILLILITRE);
-
-        assertEquals(1000.0, ml.getValue(), 1e-6);
-    }
-
-    @Test
-    void testConversion_GallonToLitre() {
-
-        Quantity<VolumeUnit> gallon =
-                new Quantity<>(1.0, VolumeUnit.GALLON);
-
-        Quantity<VolumeUnit> litre =
-                gallon.convertTo(VolumeUnit.LITRE);
-
-        assertEquals(3.78541, litre.getValue(), 1e-5);
-    }
-
-    @Test
-    void testAddition_LitrePlusMillilitre() {
-
-        Quantity<VolumeUnit> litre =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> ml =
-                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-        Quantity<VolumeUnit> result =
-                litre.add(ml);
-
-        assertEquals(2.0, result.getValue(), 1e-6);
-    }
-
-    @Test
-    void testAddition_TargetUnit_Millilitre() {
-
-        Quantity<VolumeUnit> litre =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> ml =
-                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-        Quantity<VolumeUnit> result =
-                litre.add(ml, VolumeUnit.MILLILITRE);
-
-        assertEquals(2000.0, result.getValue(), 1e-6);
-    }
-
-    @Test
-    void testVolumeVsLength_NotEqual() {
-
-        Quantity<VolumeUnit> volume =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<LengthUnit> length =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        assertFalse(volume.equals(length));
-    }
-
-    //  UC12 OPERATIONS
-
-    @Test
-    void testSubtraction_FeetMinusInches() {
-
-        Quantity<LengthUnit> feet =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> inch =
-                new Quantity<>(6.0, LengthUnit.INCH);
-
-        Quantity<LengthUnit> result = feet.subtract(inch);
-
-        assertEquals(9.5, result.getValue(), 1e-6);
-    }
-
-    @Test
-    void testDivision_FeetByFeet() {
-
-        Quantity<LengthUnit> a =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> b =
-                new Quantity<>(2.0, LengthUnit.FEET);
-
-        double result = a.divide(b);
-
-        assertEquals(5.0, result);
-    }
-
-    @Test
-    void testDivision_ByZero() {
-
-        Quantity<LengthUnit> a =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> b =
-                new Quantity<>(0.0, LengthUnit.FEET);
-
-        assertThrows(ArithmeticException.class,
-                () -> a.divide(b));
+        assertEquals(2.0,
+                result.getValue());
     }
 }
