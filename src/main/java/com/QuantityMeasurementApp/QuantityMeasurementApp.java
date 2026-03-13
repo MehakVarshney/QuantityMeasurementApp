@@ -1,18 +1,37 @@
 package com.QuantityMeasurementApp;
 
+import java.sql.Connection;
+
 import com.QuantityMeasurementApp.controller.*;
 import com.QuantityMeasurementApp.repository.*;
 import com.QuantityMeasurementApp.service.*;
+import com.QuantityMeasurementApp.util.ConnectionPool;
 import com.QuantityMeasurementApp.model.*;
 
 public class QuantityMeasurementApp {
 
     public static void main(String[] args){
+    	try{
 
-        IQuantityMeasurementRepository repo =
-                QuantityMeasurementCacheRepository
-                        .getInstance();
+            Connection con =
+                    ConnectionPool.getConnection();
 
+            con.createStatement().execute(
+
+            "CREATE TABLE IF NOT EXISTS measurement(" +
+            "id INT AUTO_INCREMENT PRIMARY KEY," +
+            "operation VARCHAR(50)," +
+            "result VARCHAR(50))");
+
+        }
+        catch(Exception e){
+
+            e.printStackTrace();
+
+        }
+
+    	IQuantityMeasurementRepository repo =
+    	        new QuantityMeasurementDatabaseRepository();
         IQuantityMeasurementService service =
                 new QuantityMeasurementServiceImpl(repo);
 
@@ -36,5 +55,7 @@ public class QuantityMeasurementApp {
         controller.performSubtract(q1,q2);
 
         controller.performDivide(q1,q2);
+        
+        System.out.println("App Started");
     }
 }
