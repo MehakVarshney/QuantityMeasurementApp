@@ -1,10 +1,9 @@
-package com.QuantityMeasurementApp;
-
 public class QuantityMeasurementApp {
-	public static class Feet {
+
+    static class Feet {
+
         private final double value;
 
-        // Constructor
         public Feet(double value) {
             this.value = value;
         }
@@ -12,27 +11,26 @@ public class QuantityMeasurementApp {
         @Override
         public boolean equals(Object obj) {
 
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
 
-            if (obj == null || getClass() != obj.getClass()) {
+            if (obj == null)
                 return false;
-            }
+
+            if (getClass() != obj.getClass())
+                return false;
 
             Feet other = (Feet) obj;
 
             return Double.compare(this.value, other.value) == 0;
         }
-        
-        public static void main(String[] args) {
-        	Feet feet1 = new Feet(1.0);
-            Feet feet2 = new Feet(1.0);
+    }
 
-            boolean result = feet1.equals(feet2);
+    public static void main(String[] args) {
 
-            System.out.println("Input: 1.0 ft and 1.0 ft");
-            System.out.println("Output: Equal (" + result + ")");
-        }
+        Feet first = new Feet(1.0);
+        Feet second = new Feet(1.0);
+
+        System.out.println("Are equal? " + first.equals(second));
     }
 }
