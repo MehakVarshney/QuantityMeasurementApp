@@ -7,23 +7,26 @@ interface SupportsArithmetic {
 
 public interface IMeasurable {
 
-    double getConversionFactor();
+	double getConversionFactor();
 
-    double convertToBaseUnit(double value);
+    default double convertToBaseUnit(double value) {
+        return value * getConversionFactor();
+    }
 
-    double convertFromBaseUnit(double baseValue);
+    default double convertFromBaseUnit(double baseValue) {
+        return baseValue / getConversionFactor();
+    }
 
     String getUnitName();
 
-    // Lambda default: arithmetic supported
+    // default: arithmetic allowed
     SupportsArithmetic supportsArithmetic = () -> true;
 
     default boolean supportsArithmetic() {
         return supportsArithmetic.isSupported();
     }
 
-    // Default validation (all units allowed)
     default void validateOperationSupport(String operation) {
-        // do nothing
+        // default does nothing
     }
 }

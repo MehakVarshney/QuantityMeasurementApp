@@ -2,106 +2,38 @@ package com.QuantityMeasurementApp;
 
 public class QuantityMeasurementApp {
 
-    public static void demonstrateEquality(Quantity<?> q1, Quantity<?> q2) {
-        System.out.println(q1 + " equals " + q2 + " → " + q1.equals(q2));
-    }
+	public static void main(String[] args) {
 
-    public static <U extends IMeasurable> void demonstrateConversion(
-            Quantity<U> q, U target) {
+		Quantity<LengthUnit> l1 = new Quantity<>(1, LengthUnit.FEET);
 
-        System.out.println(q + " → " + q.convertTo(target));
-    }
+		Quantity<LengthUnit> l2 = new Quantity<>(12, LengthUnit.INCH);
 
-    public static <U extends IMeasurable> void demonstrateAddition(
-            Quantity<U> q1, Quantity<U> q2, U target) {
+		System.out.println("Length equality: " + l1.equals(l2));
 
-        System.out.println(q1 + " + " + q2 + " → " + q1.add(q2, target));
-    }
+		Quantity<WeightUnit> w1 = new Quantity<>(1, WeightUnit.KILOGRAM);
 
-    public static <U extends IMeasurable> void demonstrateSubtraction(
-            Quantity<U> q1, Quantity<U> q2, U target) {
+		Quantity<WeightUnit> w2 = new Quantity<>(1000, WeightUnit.GRAM);
 
-        System.out.println(q1 + " - " + q2 + " → " + q1.subtract(q2, target));
-    }
-    
-    public static <U extends IMeasurable> void demonstrateDivision(
-            Quantity<U> q1, Quantity<U> q2) {
+		System.out.println("Weight addition: " + w1.add(w2));
 
-        System.out.println(q1 + " ÷ " + q2 + " → " + q1.divide(q2));
-    }
-    
-    public static void main(String[] args) {
+		Quantity<VolumeUnit> v1 = new Quantity<>(1, VolumeUnit.LITRE);
 
-        // Length example
-        Quantity<LengthUnit> length1 =
-                new Quantity<>(1.0, LengthUnit.FEET);
+		Quantity<VolumeUnit> v2 = new Quantity<>(500, VolumeUnit.MILLILITRE);
 
-        Quantity<LengthUnit> length2 =
-                new Quantity<>(12.0, LengthUnit.INCH);
+		System.out.println("Volume subtraction: " + v1.subtract(v2));
 
-        demonstrateEquality(length1, length2);
+		Quantity<TemperatureUnit> t1 = new Quantity<>(0, TemperatureUnit.CELSIUS);
 
-        demonstrateConversion(length1, LengthUnit.INCH);
+		Quantity<TemperatureUnit> t2 = new Quantity<>(32, TemperatureUnit.FAHRENHEIT);
 
-        demonstrateAddition(length1, length2, LengthUnit.FEET);
-        
-        demonstrateSubtraction(length1, length2, LengthUnit.FEET);
-        demonstrateDivision(length1, length2);
+		System.out.println("Temperature equality: " + t1.equals(t2));
 
+		System.out.println("Temperature conversion: " + t1.convertTo(TemperatureUnit.FAHRENHEIT));
 
-        // Weight example
-        Quantity<WeightUnit> weight1 =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-        Quantity<WeightUnit> weight2 =
-                new Quantity<>(1000.0, WeightUnit.GRAM);
-
-        demonstrateEquality(weight1, weight2);
-
-        demonstrateConversion(weight1, WeightUnit.GRAM);
-
-        demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
-        
-        demonstrateSubtraction(weight1, weight2, WeightUnit.KILOGRAM);
-        demonstrateDivision(weight1, weight2);
-        
-     // Volume example
-
-        Quantity<VolumeUnit> volume1 =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> volume2 =
-                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-        Quantity<VolumeUnit> volume3 =
-                new Quantity<>(1.0, VolumeUnit.GALLON);
-
-        demonstrateEquality(volume1, volume2);
-
-        demonstrateConversion(volume1, VolumeUnit.MILLILITRE);
-
-        demonstrateAddition(volume1, volume2, VolumeUnit.LITRE);
-        demonstrateSubtraction(volume1, volume2, VolumeUnit.LITRE);
-        demonstrateDivision(volume1, volume2);
-        
-     // Temperature example
-
-        Quantity<TemperatureUnit> temp1 =
-                new Quantity<>(0.0, TemperatureUnit.CELSIUS);
-
-        Quantity<TemperatureUnit> temp2 =
-                new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
-
-        demonstrateEquality(temp1, temp2);
-
-        demonstrateConversion(temp1, TemperatureUnit.FAHRENHEIT);
-
-        // This will throw exception
-        try {
-            demonstrateAddition(temp1, temp2, TemperatureUnit.CELSIUS);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
-    }
+		try {
+			t1.add(t2);
+		} catch (UnsupportedOperationException e) {
+			System.out.println("Temperature arithmetic not supported");
+		}
+	}
 }

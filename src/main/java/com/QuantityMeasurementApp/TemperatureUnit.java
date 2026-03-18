@@ -1,51 +1,48 @@
 package com.QuantityMeasurementApp;
-
+import java.util.function.Function;
 public enum TemperatureUnit implements IMeasurable {
 
-    CELSIUS {
-        public double convertToBaseUnit(double value) {
-            return value;
-        }
+	CELSIUS(c -> c, c -> c),
 
-        public double convertFromBaseUnit(double base) {
-            return base;
-        }
+	FAHRENHEIT(f -> (f - 32) * 5 / 9, c -> (c * 9 / 5) + 32);
 
-        public String getUnitName() {
-            return "Celsius";
-        }
-    },
+	private final Function<Double, Double> toBase;
+	private final Function<Double, Double> fromBase;
 
-    FAHRENHEIT {
-        public double convertToBaseUnit(double value) {
-            return (value - 32) * 5 / 9;
-        }
+	private final SupportsArithmetic supportsArithmetic = () -> false;
 
-        public double convertFromBaseUnit(double base) {
-            return (base * 9 / 5) + 32;
-        }
+	TemperatureUnit(Function<Double, Double> toBase, Function<Double, Double> fromBase) {
+		this.toBase = toBase;
+		this.fromBase = fromBase;
+	}
 
-        public String getUnitName() {
-            return "Fahrenheit";
-        }
-    };
+	@Override
+	public double getConversionFactor() {
+		return 1.0;
+	}
 
-    // Temperature does NOT support arithmetic
-    SupportsArithmetic supportsArithmetic = () -> false;
+	@Override
+	public double convertToBaseUnit(double value) {
+		return toBase.apply(value);
+	}
 
-    @Override
-    public boolean supportsArithmetic() {
-        return supportsArithmetic.isSupported();
-    }
+	@Override
+	public double convertFromBaseUnit(double baseValue) {
+		return fromBase.apply(baseValue);
+	}
 
-    @Override
-    public void validateOperationSupport(String operation) {
-        throw new UnsupportedOperationException(
-                "Temperature does not support " + operation + " operation");
-    }
+	@Override
+	public String getUnitName() {
+		return name();
+	}
 
-    @Override
-    public double getConversionFactor() {
-        return 1.0;
-    }
+	@Override
+	public boolean supportsArithmetic() {
+		return supportsArithmetic.isSupported();
+	}
+
+	@Override
+	public void validateOperationSupport(String operation) {
+		throw new UnsupportedOperationException("Temperature does not support " + operation);
+	}
 }
