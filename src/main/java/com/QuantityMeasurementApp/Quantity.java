@@ -3,93 +3,83 @@ package com.QuantityMeasurementApp;
 import java.util.Objects;
 
 public class Quantity<U extends IMeasurable> {
+	private final double value;
+	private final U unit;
 
-    private final double value;
-    private final U unit;
+	private static final double EPSILON = 1e-6;
 
-    public Quantity(double value, U unit) {
+	public Quantity(double value, U unit) {
 
-        if (unit == null)
-            throw new IllegalArgumentException("Unit cannot be null");
+		if (unit == null)
+			throw new IllegalArgumentException("Unit cannot be null");
 
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Invalid value");
+		if (!Double.isFinite(value))
+			throw new IllegalArgumentException("Invalid value");
 
-        this.value = value;
-        this.unit = unit;
-    }
+		this.value = value;
+		this.unit = unit;
+	}
 
-    public double getValue() {
-        return value;
-    }
+	public double getValue() {
+		return value;
+	}
 
-    public U getUnit() {
-        return unit;
-    }
+	public U getUnit() {
+		return unit;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
+	private double toBaseUnit() {
+		return unit.convertToBaseUnit(value);
+	}
 
-        if (this == obj)
-            return true;
+	public Quantity<U> convertTo(U targetUnit) {
 
-        if (obj == null || getClass() != obj.getClass())
-            return false;
+		double base = unit.convertToBaseUnit(value);
+		double converted = targetUnit.convertFromBaseUnit(base);
 
-        Quantity<?> other = (Quantity<?>) obj;
+		return new Quantity<>(converted, targetUnit);
+	}
 
-        if (!unit.getClass().equals(other.unit.getClass()))
-            return false;
+	public Quantity<U> add(Quantity<U> other) {
+		return add(other, this.unit);
+	}
 
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
+	public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        return Double.compare(thisBase, otherBase) == 0;
-    }
+		double a = unit.convertToBaseUnit(value);
+		double b = other.unit.convertToBaseUnit(other.value);
 
-    public Quantity<U> convertTo(U targetUnit) {
+		double sum = a + b;
 
-        if(targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
+		double result = targetUnit.convertFromBaseUnit(sum);
 
-        double base = unit.convertToBaseUnit(value);
+		return new Quantity<>(result, targetUnit);
+	}
 
-        double converted = targetUnit.convertFromBaseUnit(base);
+	@Override
+	public boolean equals(Object obj) {
 
-        return new Quantity<>(converted, targetUnit);
-    }
-    
-    public Quantity<U> add(Quantity<U> other) {
+		if (this == obj)
+			return true;
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
+		if (obj == null || getClass() != obj.getClass())
+			return false;
 
-        double sum = base1 + base2;
+		Quantity<?> other = (Quantity<?>) obj;
 
-        double result = unit.convertFromBaseUnit(sum);
+		if (!unit.getClass().equals(other.unit.getClass()))
+			return false;
 
-        return new Quantity<>(result, unit);
-    }
+		return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < EPSILON;
+	}
 
-    public Quantity<U> add(Quantity<U> other, U targetUnit) {
+	@Override
+	public int hashCode() {
+		return Objects.hash(Math.round(toBaseUnit() / EPSILON));  
+	}
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
-
-        double sum = base1 + base2;
-
-        double result = targetUnit.convertFromBaseUnit(sum);
-
-        return new Quantity<>(result, targetUnit);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(unit.convertToBaseUnit(value));
-    }
-
-    @Override
-    public String toString() {
-        return "Quantity(" + value + ", " + unit.getUnitName() + ")";
-    }
+	@Override
+	public String toString() {
+		return value + " " + unit.getUnitName();
+	}
 }
