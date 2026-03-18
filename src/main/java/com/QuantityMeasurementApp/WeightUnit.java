@@ -1,22 +1,23 @@
 package com.QuantityMeasurementApp;
 
 public enum WeightUnit {
+	KILOGRAM(1.0), GRAM(0.001), POUND(0.453592);
 
-    KILOGRAM(1.0),
-    GRAM(0.001),
-    POUND(0.453592);
+	private final double factorToKg;
 
-    private final double toKgFactor;
+	WeightUnit(double factorToKg) {
+		this.factorToKg = factorToKg;
+	}
 
-    WeightUnit(double toKgFactor) {
-        this.toKgFactor = toKgFactor;
-    }
+	public double toKilogram(double value) {
+		return value * factorToKg;
+	}
 
-    public double convertToBaseUnit(double value) {
-        return value * toKgFactor;
-    }
+	public double fromKilogram(double kgValue) {
+		return kgValue / factorToKg;
+	}
 
-    public double convertFromBaseUnit(double baseValue) {
-        return baseValue / toKgFactor;
-    }
+	public double getFactorToKg() {
+		return factorToKg;
+	}
 }
