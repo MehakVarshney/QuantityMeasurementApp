@@ -1,40 +1,39 @@
 package com.QuantityMeasurementApp;
 
-import com.QuantityMeasurementApp.controller.*;
-import com.QuantityMeasurementApp.repository.*;
-import com.QuantityMeasurementApp.service.*;
-import com.QuantityMeasurementApp.model.*;
-
 public class QuantityMeasurementApp {
 
-    public static void main(String[] args){
+	public static void main(String[] args) {
 
-        IQuantityMeasurementRepository repo =
-                QuantityMeasurementCacheRepository
-                        .getInstance();
+		Quantity<LengthUnit> l1 = new Quantity<>(1, LengthUnit.FEET);
 
-        IQuantityMeasurementService service =
-                new QuantityMeasurementServiceImpl(repo);
+		Quantity<LengthUnit> l2 = new Quantity<>(12, LengthUnit.INCH);
 
-        QuantityMeasurementController controller =
-                new QuantityMeasurementController(service);
+		System.out.println("Length equality: " + l1.equals(l2));
 
-        QuantityDTO q1 =
-                new QuantityDTO(
-                        1.0,"FEET","LENGTH");
+		Quantity<WeightUnit> w1 = new Quantity<>(1, WeightUnit.KILOGRAM);
 
-        QuantityDTO q2 =
-                new QuantityDTO(
-                        12.0,"INCH","LENGTH");
+		Quantity<WeightUnit> w2 = new Quantity<>(1000, WeightUnit.GRAM);
 
-        controller.performCompare(q1,q2);
+		System.out.println("Weight addition: " + w1.add(w2));
 
-        controller.performConvert(q1,"INCH");
+		Quantity<VolumeUnit> v1 = new Quantity<>(1, VolumeUnit.LITRE);
 
-        controller.performAdd(q1,q2);
+		Quantity<VolumeUnit> v2 = new Quantity<>(500, VolumeUnit.MILLILITRE);
 
-        controller.performSubtract(q1,q2);
+		System.out.println("Volume subtraction: " + v1.subtract(v2));
 
-        controller.performDivide(q1,q2);
-    }
+		Quantity<TemperatureUnit> t1 = new Quantity<>(0, TemperatureUnit.CELSIUS);
+
+		Quantity<TemperatureUnit> t2 = new Quantity<>(32, TemperatureUnit.FAHRENHEIT);
+
+		System.out.println("Temperature equality: " + t1.equals(t2));
+
+		System.out.println("Temperature conversion: " + t1.convertTo(TemperatureUnit.FAHRENHEIT));
+
+		try {
+			t1.add(t2);
+		} catch (UnsupportedOperationException e) {
+			System.out.println("Temperature arithmetic not supported");
+		}
+	}
 }
