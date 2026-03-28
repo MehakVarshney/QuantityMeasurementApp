@@ -5,34 +5,43 @@ import java.util.Properties;
 
 public class ApplicationConfig {
 
-    private static Properties properties =
-            new Properties();
+	private static final Properties properties = new Properties();
 
-    static{
+	static {
+		try {
+			InputStream input = ApplicationConfig.class.getClassLoader().getResourceAsStream("application.properties");
+			if (input != null) {
+				properties.load(input);
+				System.out.println("ApplicationConfig: properties loaded successfully");
+			} else {
+				System.out.println("ApplicationConfig: properties file not found, using defaults");
+			}
+		} catch (Exception e) {
+			System.out.println("ApplicationConfig: error loading properties - " + e.getMessage());
+		}
+	}
 
-        try{
+	public static String getDbUrl() {
+		return properties.getProperty("db.url", "jdbc:h2:mem:quantitydb;DB_CLOSE_DELAY=-1");
+	}
 
-            InputStream input =
-                    ApplicationConfig.class
-                    .getClassLoader()
-                    .getResourceAsStream("application.properties");
+	public static String getDbUsername() {
+		return properties.getProperty("db.username", "sa");
+	}
 
-            properties.load(input);
+	public static String getDbPassword() {
+		return properties.getProperty("db.password", "");
+	}
 
-        }
-        catch(Exception e){
+	public static String getDbDriver() {
+		return properties.getProperty("db.driver", "org.h2.Driver");
+	}
 
-            throw new RuntimeException(
-                    "Config load failed");
+	public static int getPoolSize() {
+		return Integer.parseInt(properties.getProperty("db.pool.size", "5"));
+	}
 
-        }
-
-    }
-
-    public static String get(String key){
-
-        return properties.getProperty(key);
-
-    }
-
+	public static String getRepositoryType() {
+		return properties.getProperty("repository.type", "cache");
+	}
 }

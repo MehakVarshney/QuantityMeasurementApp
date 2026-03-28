@@ -2,37 +2,59 @@ package com.QuantityMeasurementApp.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionPool {
 
-    private static Connection connection;
+	private static ConnectionPool instance;
+	private final List<Connection> availableConnections = new ArrayList<>();
+	private int activeConnections = 0;
+	private final int maxPoolSize;
 
-    public static Connection getConnection(){
+	private ConnectionPool() {
+		this.maxPoolSize = ApplicationConfig.getPoolSize();
+		initializePool();
+	}
 
-        try{
+	private void initializePool() {
+		try {
+			Class.forName(ApplicationConfig.getDbDriver());
+			for (int i = 0; i < maxPoolSize; i++) {
+				Connection conn = DriverManager.getConnection(ApplicationConfig.getDbUrl(),
+						ApplicationConfig.getDbUsername(), ApplicationConfig.getDbPassword());
+				availableConnections.add(conn);
+			}
+			System.out.println("ConnectionPool: initialized with " + maxPoolSize + " connections");
+		} catch (Exception e) {
+			System.out.println("ConnectionPool: error initializing - " + e.getMessage());
+		}
+	}
 
-            if(connection==null ||
-                    connection.isClosed()){
+	public static ConnectionPool getInstance() {
+		if (instance == null) {
+			instance = new ConnectionPool();
+		}
+		return instance;
+	}
 
-                connection =
-                        DriverManager.getConnection(
-                                ApplicationConfig.get("db.url"),
-                                ApplicationConfig.get("db.user"),
-                                ApplicationConfig.get("db.password"));
+	public synchronized Connection getConnection() throws Exception {
+		if (availableConnections.isEmpty()) {
+			throw new Exception("ConnectionPool: no available connections");
+		}
+		Connection conn = availableConnections.remove(availableConnections.size() - 1);
+		activeConnections++;
+		return conn;
+	}
 
-            }
+	public synchronized void releaseConnection(Connection conn) {
+		if (conn != null) {
+			availableConnections.add(conn);
+			activeConnections--;
+		}
+	}
 
-        }
-        catch(SQLException e){
-
-            throw new RuntimeException(
-                    "DB connection failed");
-
-        }
-
-        return connection;
-
-    }
-
+	public String getPoolStatistics() {
+		return "Active: " + activeConnections + ", Available: " + availableConnections.size();
+	}
 }

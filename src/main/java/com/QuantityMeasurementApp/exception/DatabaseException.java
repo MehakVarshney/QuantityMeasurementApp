@@ -1,12 +1,12 @@
 package com.QuantityMeasurementApp.exception;
 
-public class DatabaseException
-        extends RuntimeException{
+public class DatabaseException extends RuntimeException {
 
-    public DatabaseException(String msg){
+	public DatabaseException(String message) {
+		super(message);
+	}
 
-        super(msg);
-
-    }
-
+	public DatabaseException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

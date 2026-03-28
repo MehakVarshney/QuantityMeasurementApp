@@ -1,4 +1,4 @@
-package com.QuantityMeasurementApp;
+package com.QuantityMeasurementApp.unit;
 
 public enum LengthUnit implements IMeasurable {
 
@@ -20,4 +20,16 @@ public enum LengthUnit implements IMeasurable {
     public String getUnitName() {
         return name();
     }
+
+	@Override
+	public double convertToBaseUnit(double value) {
+		// TODO Auto-generated method stub
+		return value*factor;
+	}
+
+	@Override
+	public double convertFromBaseUnit(double baseValue) {
+		// TODO Auto-generated method stub
+		return baseValue / factor;
+	}
 }
