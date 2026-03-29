@@ -13,21 +13,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    // Spring Security calls this method when someone tries to login
     @Override
-    public UserDetails loadUserByUsername(String username) 
+    public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        // Find user in database
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User not found: " + username));
 
-        // Convert our User to Spring Security's UserDetails format
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                Collections.emptyList()
-        );
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities(Collections.emptyList())
+                .build();
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -27,12 +26,18 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private OAuth2SuccessHandler oauth2SuccessHandler;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Authentication provider - uses our UserDetailsService
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
@@ -43,14 +48,12 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Autowired
-    private OAuth2SuccessHandler oauth2SuccessHandler;
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) 
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints - no token needed
                 .requestMatchers("/auth/register").permitAll()
@@ -69,6 +72,15 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .frameOptions(frame -> frame.disable())
             )
+            // CORS configuration for frontend
+            .cors(cors -> cors.configurationSource(request -> {
+                var config = new org.springframework.web.cors.CorsConfiguration();
+                config.setAllowedOrigins(java.util.List.of("*"));
+                config.setAllowedMethods(java.util.List.of(
+                    "GET", "POST", "PUT", "DELETE"));
+                config.setAllowedHeaders(java.util.List.of("*"));
+                return config;
+            }))
             // Add OAuth2 login support
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oauth2SuccessHandler)

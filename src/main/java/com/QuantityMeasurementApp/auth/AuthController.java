@@ -56,25 +56,31 @@ public class AuthController {
                                 "User registered successfully!"));
     }
 
-    // POST /auth/login - Login and get JWT token
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @RequestBody AuthRequest request) {
 
-        // Authenticate username and password
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(), 
-                        request.getPassword()));
+        try {
+            // Authenticate username and password
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()));
 
-        // Load user details and generate token
-        UserDetails userDetails = 
-            userDetailsService.loadUserByUsername(request.getUsername());
-        String token = jwtUtil.generateToken(userDetails.getUsername());
+            // Load user details and generate token
+            UserDetails userDetails =
+                userDetailsService.loadUserByUsername(request.getUsername());
+            String token = jwtUtil.generateToken(userDetails.getUsername());
 
-        return ResponseEntity.ok(
-                new AuthResponse(token, request.getUsername(), 
-                                "Login successful!"));
+            return ResponseEntity.ok(
+                    new AuthResponse(token, request.getUsername(),
+                                    "Login successful!"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponse(null, null,
+                          "Invalid username or password!"));
+        }
     }
     
  // GET /auth/oauth2/success - Called after Google login
