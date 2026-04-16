@@ -12,8 +12,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.Ordered;
 
 @Component
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -27,7 +30,14 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-
+    	String requestPath = request.getRequestURI();
+        if (requestPath.contains("/oauth2") || 
+            requestPath.contains("/login") ||
+            requestPath.contains("/auth/register") ||
+            requestPath.contains("/auth/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
