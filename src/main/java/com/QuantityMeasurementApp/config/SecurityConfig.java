@@ -61,12 +61,21 @@ public class SecurityConfig {
                 .requestMatchers("/auth/oauth2/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
+                // OAuth2 endpoints - must be permitted!
+                .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/login/**").permitAll()
+                .requestMatchers(
+                	    "/swagger-ui/**",
+                	    "/swagger-ui.html",
+                	    "/v3/api-docs/**",
+                	    "/v3/api-docs"
+                	).permitAll()
                 // All other endpoints need JWT token
                 .anyRequest().authenticated()
             )
-            // Stateless session - no server side sessions
+            // IF_REQUIRED allows OAuth2 to store state in session
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
             // Allow H2 console frames
             .headers(headers -> headers
@@ -77,8 +86,9 @@ public class SecurityConfig {
                 var config = new org.springframework.web.cors.CorsConfiguration();
                 config.setAllowedOrigins(java.util.List.of("*"));
                 config.setAllowedMethods(java.util.List.of(
-                    "GET", "POST", "PUT", "DELETE"));
+                    "GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(java.util.List.of("*"));
+                config.setAllowCredentials(false);
                 return config;
             }))
             // Add OAuth2 login support
