@@ -8,10 +8,20 @@ A Java application built using **Data Driven Testing (DDT)** that progressively 
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen?style=flat-square)
-![H2](https://img.shields.io/badge/H2-Database-blue?style=flat-square)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=flat-square)
 ![JPA](https://img.shields.io/badge/Spring%20Data-JPA-green?style=flat-square)
 ![Maven](https://img.shields.io/badge/Maven-Build-red?style=flat-square)
 ![JUnit](https://img.shields.io/badge/JUnit-5-yellow?style=flat-square)
+
+---
+
+## 🌐 Live Demo
+
+| Service | URL |
+|---------|-----|
+| 🖥️ Frontend | [quantity-measurementapp.netlify.app](https://quantity-measurementapp.netlify.app) |
+| ⚙️ Backend API | [quantitymeasurementapp-production-369b.up.railway.app](https://quantitymeasurementapp-production-369b.up.railway.app) |
+| 🗒️ Documentation | [quantitymeasurementapp-production-369b.up.railway.app/swagger-ui/index.html]( https://quantitymeasurementapp-production-369b.up.railway.app/swagger-ui/index.html) |
 
 ---
 
@@ -76,7 +86,7 @@ This project was built **use case by use case**, each one adding a new layer of 
 
 | UC | Branch | Description |
 |----|--------|-------------|
-| UC17 | `feature/UC17-SpringBackendQMA` | Full Spring Boot REST API with JPA, embedded Tomcat, H2 console, Security config, and Global Exception Handler |
+| UC17 | `feature/UC17-SpringBoot` | Full Spring Boot REST API with JPA, embedded Tomcat, Security config, and Global Exception Handler |
 
 **Key concepts introduced:**
 - Spring Boot auto-configuration
@@ -84,7 +94,7 @@ This project was built **use case by use case**, each one adding a new layer of 
 - REST Controllers with `@RestController`
 - Dependency Injection with `@Autowired`
 - Global Exception Handling with `@RestControllerAdvice`
-- H2 in-memory database with JPA auto table creation
+- JPA auto table creation
 
 ---
 
@@ -92,14 +102,17 @@ This project was built **use case by use case**, each one adding a new layer of 
 
 | UC | Branch | Description |
 |----|--------|-------------|
-| UC18 | `feature/UC18-GoogleAuth` | Google OAuth2 login + JWT token based API security |
+| UC18 | `feature/UC18-GoogleAuth` | Google OAuth2 + Email/Password login, JWT token based API security, MySQL database migration |
 
 **Key concepts introduced:**
 - Google OAuth2 authentication
+- Email + Password registration and login
+- BCrypt password hashing
 - JWT token generation and validation
 - Protected API endpoints
 - Spring Security filter chain
 - Stateless session management
+- MySQL database (migrated from H2)
 
 ---
 
@@ -108,11 +121,21 @@ This project was built **use case by use case**, each one adding a new layer of 
 ### Prerequisites
 - Java 17+
 - Maven 3.6+
+- MySQL 8.0+
+- Docker (optional, for MySQL)
+
+### Database Setup
+```sql
+CREATE DATABASE quantity_measurement_db;
+```
 
 ### Steps
 ```bash
 # Clone the repo
 git clone https://github.com/MehakVarshney/QuantityMeasurementApp.git
+
+# Copy example properties and fill in your credentials
+cp src/main/resources/application.properties.example src/main/resources/application.properties
 
 # Run the app
 mvn spring-boot:run
@@ -141,7 +164,7 @@ mvn test -Dtest=QuantityMeasurementAppTest
 | Length | `FEET`, `INCH`, `YARDS`, `CENTIMETER` |
 | Weight | `KILOGRAM`, `GRAM`, `POUND` |
 | Volume | `LITRE`, `MILLILITRE`, `GALLON` |
-| Temperature | `CELSIUS`, `FAHRENHEIT` *(comparison & conversion only)* |
+| Temperature | `CELSIUS`, `FAHRENHEIT` |
 
 ---
 
@@ -155,7 +178,9 @@ mvn test -Dtest=QuantityMeasurementAppTest
 - Spring Data JPA & ORM
 - REST API Design
 - Global Exception Handling
-- H2 In-Memory Database
+- MySQL Database
+- Google OAuth2 + JWT Security
+- BCrypt Password Hashing
 
 ---
 
